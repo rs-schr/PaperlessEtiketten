@@ -3,9 +3,9 @@ from pathlib import Path
 from reportlab.pdfgen import canvas  # type: ignore
 from reportlab.lib.pagesizes import A4  # type: ignore
 
-def lade_csv_daten():
+def lade_csv_daten(pFile):
     try:
-        csv_datei = Path("ASN_Liste.csv")
+        csv_datei = Path(pFile)
         if not csv_datei.exists():
             raise FileNotFoundError("Die Datei ASN_Liste.csv wurde nicht gefunden!")
             
@@ -37,9 +37,28 @@ from reportlab.pdfgen import canvas  # type: ignore
 from reportlab.lib.pagesizes import A4  # type: ignore
 import os
 
-def erstelle_etiketten(etiketten_daten):
+def erstelle_etiketten(etiketten_daten, start_wert=None, end_wert=None):
     if not etiketten_daten:
         print("Keine Daten zum Drucken vorhanden!")
+        return
+        
+    print(f"Original data count: {len(etiketten_daten)}")
+    print(f"Filtering with start_wert: {start_wert}")
+
+    filtered_daten = etiketten_daten
+    if start_wert:
+        # Remove 'ASN' prefix and leading zeros, then compare as integers
+        filtered_daten = {k: v for k, v in filtered_daten.items() 
+                         if int(k.replace('ASN', '').lstrip('0')) >= int(start_wert)}
+    if end_wert:
+        filtered_daten = {k: v for k, v in filtered_daten.items() 
+                         if int(k.replace('ASN', '').lstrip('0')) <= int(end_wert)}
+
+    print(f"Filtered data count: {len(filtered_daten)}")
+    print(f"First few filtered items: {list(filtered_daten.items())[:3]}")
+        
+    if not filtered_daten:
+        print("Keine Daten im angegebenen Bereich gefunden!")
         return
         
     # Etiketten Maße (in mm)
@@ -61,7 +80,7 @@ def erstelle_etiketten(etiketten_daten):
     etiketten_zaehler = 0
     seite = 0
     
-    for schluessel, wert in etiketten_daten.items():
+    for schluessel, wert in filtered_daten.items():
         if etiketten_zaehler >= etiketten_pro_zeile * etiketten_pro_spalte:
             pdf.showPage()
             etiketten_zaehler = 0
@@ -88,10 +107,79 @@ def erstelle_etiketten(etiketten_daten):
         etiketten_zaehler += 1
     pdf.save()    
     print("PDF wurde erfolgreich erstellt!")
-
 # Hauptprogramm
 if __name__ == "__main__":
-    daten = lade_csv_daten()
-    if daten:
-        erstelle_etiketten(daten)
-
+    import tkinter as tk
+    from tkinter import filedialog, messagebox
+    
+    root = tk.Tk()
+    root.withdraw()  # Hide the main window
+    
+    # Create main dialog
+    dialog = tk.Toplevel(root)
+    dialog.title("CSV Laden und Bereichsauswahl")
+    
+    # Center the dialog
+    dialog.geometry("400x300")
+    dialog.update_idletasks()
+    x = (dialog.winfo_screenwidth() - dialog.winfo_width()) // 2
+    y = (dialog.winfo_screenheight() - dialog.winfo_height()) // 2
+    dialog.geometry(f"+{x}+{y}")
+    
+    file_path = None
+    daten = None
+    
+    def select_file():
+        global file_path, daten
+        file_path = filedialog.askopenfilename(
+            title="Wählen Sie die CSV-Datei",
+            filetypes=[("CSV files", "*.csv"), ("All files", "*.*")]
+        )
+        if file_path:
+            daten = lade_csv_daten(file_path)
+            if daten:
+                # Get first and last values
+                sorted_keys = sorted(daten.keys())
+                first_value = sorted_keys[0]
+                last_value = sorted_keys[-1]
+                
+                # Enable input fields and show range info
+                range_label.config(text=f"Erster Wert: {first_value}\nLetzter Wert: {last_value}\n\nWenn gewünscht, den Start- und Endwert eingeben: (Leer bedeutet alles)")
+                start_frame.pack(pady=5)
+                end_frame.pack(pady=5)
+                ok_button.pack(pady=10)
+                dialog.bind('<Return>', lambda event: process())
+    # File selection button
+    tk.Button(dialog, text="CSV-Datei auswählen", command=select_file).pack(pady=10)
+    
+    # Range info label
+    range_label = tk.Label(dialog, text="")
+    range_label.pack(pady=10)
+    
+    # Create frames but don't pack them yet
+    start_frame = tk.Frame(dialog)
+    tk.Label(start_frame, text="Start Wert:").pack(side=tk.LEFT)
+    start_entry = tk.Entry(start_frame)
+    start_entry.pack(side=tk.LEFT)
+    
+    end_frame = tk.Frame(dialog)
+    tk.Label(end_frame, text="End Wert:").pack(side=tk.LEFT)
+    end_entry = tk.Entry(end_frame)
+    end_entry.pack(side=tk.LEFT)
+        
+    
+    def process():
+        if daten:
+            start = start_entry.get()
+            end = end_entry.get()
+            print(start, end)
+            if start and not end:
+                # Extract the numeric part from the max key
+                max_key = max(daten.keys())
+                end = max_key.replace('ASN', '').lstrip('0')
+            dialog.destroy()
+            root.destroy()
+            erstelle_etiketten(daten, start_wert=start, end_wert=end)    
+    ok_button = tk.Button(dialog, text="OK", command=process)
+    
+    root.mainloop()
