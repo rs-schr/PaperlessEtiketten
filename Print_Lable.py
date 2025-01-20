@@ -165,10 +165,19 @@ if __name__ == "__main__":
 
     root = tk.Tk()
     root.withdraw()  # Hide the main window
-# Create main dialog
+# Create main dialog with modern dimensions and padding
 dialog = tk.Toplevel(root)
 dialog.title("CSV Laden und Bereichsauswahl")
-dialog.geometry("400x300")
+dialog.geometry("450x250")
+
+# Create main container frame with padding
+main_frame = tk.Frame(dialog, padx=20, pady=15)
+main_frame.grid(row=0, column=0, sticky="nsew")
+
+# Configure grid weights for centering
+dialog.grid_rowconfigure(0, weight=1)
+dialog.grid_columnconfigure(0, weight=1)
+main_frame.grid_columnconfigure(0, weight=1)
 
 
 # Define select_file function first
@@ -185,40 +194,44 @@ def select_file():
             first_value = sorted_keys[0]
             last_value = sorted_keys[-1]
             range_label.config(
-                text=f"Bereich: {first_value} bis {last_value}\nOptional Start- und Endwert eingeben:"
+                text=f"Bereich: {first_value} bis {last_value}\n\nOptional zum Filtern Start- und Endwert eingeben:"
             )
-            start_frame.grid(row=2, pady=5)
-            end_frame.grid(row=3, pady=5)
-            delete_checkbox.grid(row=4, pady=5)
-            ok_button.grid(row=5, pady=10)
+            start_frame.grid(row=2, column=0, sticky="ew")
+            end_frame.grid(row=3, column=0, sticky="ew")
+            delete_checkbox.grid(row=4, column=0, sticky="ew")
+            ok_button.grid(row=5, column=0, sticky="ew")
             dialog.bind("<Return>", lambda event: process())
 
 
-# File selection button
-tk.Button(dialog, text="CSV-Datei auswählen", command=select_file).grid(row=0, pady=2)
+# File selection section - centered
+file_button = tk.Button(
+    main_frame, text="CSV-Datei auswählen", command=select_file, width=30
+)
+file_button.grid(row=0, column=0, sticky="ew")
 
-# Range info label
-range_label = tk.Label(dialog, text="", height=4, wraplength=350)
-range_label.grid(row=1, pady=2)
+# Range info - centered
+range_label = tk.Label(main_frame, text="", height=3, wraplength=400)
+range_label.grid(row=1, column=0, sticky="ew")
 
 file_path = None
 daten = None
+# Create frames with grid layout and fixed-width labels
+start_frame = tk.Frame(main_frame)
+tk.Label(start_frame, text="Start Wert:", width=12, anchor="e").grid(
+    row=0, column=0, padx=5
+)
+start_entry = tk.Entry(start_frame, width=20)
+start_entry.grid(row=0, column=1)
 
-# Create frames but don't pack them yet
-start_frame = tk.Frame(dialog)
-tk.Label(start_frame, text="Start Wert:").pack(side=tk.LEFT)
-start_entry = tk.Entry(start_frame)
-start_entry.pack(side=tk.LEFT)
-
-end_frame = tk.Frame(dialog)
-tk.Label(end_frame, text="End Wert:").pack(side=tk.LEFT)
-end_entry = tk.Entry(end_frame)
-end_entry.pack(side=tk.LEFT)
-
-# Create checkbox (without packing)
+end_frame = tk.Frame(main_frame)
+tk.Label(end_frame, text="End Wert:  ", width=12, anchor="e").grid(
+    row=0, column=0, padx=5
+)
+end_entry = tk.Entry(end_frame, width=20)
+end_entry.grid(row=0, column=1)  # Create checkbox (without packing)
 delete_var = tk.BooleanVar()
 delete_checkbox = tk.Checkbutton(
-    dialog, text="Lösche Daten nach der Bearbeitung", variable=delete_var
+    main_frame, text="Lösche Daten nach der Bearbeitung", variable=delete_var
 )
 
 
@@ -241,6 +254,7 @@ def process():
         )
 
 
-ok_button = tk.Button(dialog, text="OK", command=process)
+# OK button with distinct styling
+ok_button = tk.Button(main_frame, text="OK", command=process)
 
 root.mainloop()
