@@ -2,3 +2,4 @@ ASN_Liste*.csv
 /venv
 labels*.pdf
 markdown*.md
+__pycache__
