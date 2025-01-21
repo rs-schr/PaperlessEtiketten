@@ -1,5 +1,6 @@
-ASN_Liste*.csv
+ASN_Liste*.bak
 /venv
 labels*.pdf
-markdown*.md
+markdown-*.md
+.markdown*.*
 /__pycache__

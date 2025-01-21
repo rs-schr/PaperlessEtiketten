@@ -1,4 +1,6 @@
-**A very simple script that generates a PDF for Paperless ASN-Codes with QR code from numbers that are loaded from the CSV file.**
+# A very simple script that generates a PDF for Paperless ASN-Codes with QR code from numbers that are loaded from the CSV file.
+
+### The script is written in Python and uses the fpdf library for the PDF generation.**
 
 the parameters for the labels can be adjusted in config.py.
 
@@ -12,7 +14,24 @@ Limits can be set for Start and End Value.
 Only numbers are valid as limits.
 
 For example, if 800 is specified as the start and 1100 as the end, 
-the program reports that there are 301 labels and suggests extending it to 336 to fill an entire sheet.
+the program reports that there are 301 lables and suggests extending it to 336 to fill an entire sheet.
 
-The data that has been printed out can be deleted from the CSV file using the checkbox.
+The data that has been write in a pdf lables_[timestamp].pdf alabes can be deleted from the CSV file using the checkbox.
 However, a backup file is created.
+
+## Installation
+
+1. Create a folder to save the scripts and virtual environment `mkdir scripts`
+2. cd into scripts directory `cd scripts`
+3. Create a virtual environment `python -m venv venv`
+4. Activate the virtual environment using one of the commands below
+
+```
+source venv/bin/activate
+. ./venv/bin/activate` 
+```
+5. Install the dependencies `pip install -r requirements.txt`
+6. Clone this repository to the directory
+   
+   
+
