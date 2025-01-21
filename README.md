@@ -1,6 +1,7 @@
-<b>A very simple script that generates a PDF with QR codes from ASN numbers that are loaded from the CSV file.</b>
+**A very simple script that generates a PDF for Paperless ASN-Codes with QR code from numbers that are loaded from the CSV file.**
 
-The parameters for the labels can be adjusted in config.py.
+the parameters for the labels can be adjusted in config.py.
+
 
 ![image](https://github.com/user-attachments/assets/acd627b9-557c-4287-b997-8e995289e309)
 

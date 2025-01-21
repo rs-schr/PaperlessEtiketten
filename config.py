@@ -6,5 +6,5 @@ LABEL_CONFIG = {
     "margin_left": 10,
     "per_row": 7,
     "per_column": 16,
-    "y_offset": 0,  # Added y_offset configuration
+    
 }

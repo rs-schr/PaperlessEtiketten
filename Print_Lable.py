@@ -180,21 +180,21 @@ class LabelGenerator:
             return
 
         print("Creating PDF...")
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        pdf_file_name = f"labels_{timestamp}.pdf"
 
-        pdf = canvas.Canvas("labels.pdf", pagesize=A4)
+        pdf = canvas.Canvas(pdf_file_name, pagesize=A4)
 
         # Calculate positions using config values
         mm_to_points = 2.83465
         x_positions = [
-            LABEL_CONFIG["margin_left"] * mm_to_points
             + i * (LABEL_CONFIG["width"] * mm_to_points)
             for i in range(LABEL_CONFIG["per_row"])
         ]
         y_positions = [
             A4[1]
             - (LABEL_CONFIG["margin_top"] * mm_to_points)
-            - j * (LABEL_CONFIG["height"] * mm_to_points)
-            - (LABEL_CONFIG["y_offset"] * mm_to_points)
+            - j * (LABEL_CONFIG["height"] * mm_to_points)            
             for j in range(LABEL_CONFIG["per_column"])
         ]
 
@@ -232,6 +232,32 @@ class LabelGenerator:
         if delete_data:
             self.backup_and_update_csv(file_path, filtered_data)
 
+            LABEL_CONFIG["margin_left"] * mm_to_points
+
+    def backup_and_update_csv(self, file_path, filtered_data):
+        # Create backup with timestamp
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        backup_path = f"{file_path}.{timestamp}.bak"
+        shutil.copy2(file_path, backup_path)
+
+        # Read all data from original CSV
+        all_rows = []
+        with open(file_path, 'r', encoding='utf-8') as file:
+            csv_reader = csv.reader(file, delimiter=';')
+            header = next(csv_reader)
+            all_rows.append(header)
+            
+            
+            # Only keep rows that weren't in filtered_data
+            for row in csv_reader:
+                if row[0] not in filtered_data:
+                    all_rows.append(row)
+
+        # Write remaining data back to CSV
+        with open(file_path, 'w', newline='', encoding='utf-8') as file:
+            csv_writer = csv.writer(file, delimiter=';')
+            csv_writer.writerows(all_rows)
+
 
 def validate_input(self, value):
     if value and not value.isdigit():
@@ -250,3 +276,4 @@ if __name__ == "__main__":
 
 def run(self):
     self.root.mainloop()
+

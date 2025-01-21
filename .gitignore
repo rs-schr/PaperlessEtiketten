@@ -1,3 +1,4 @@
 ASN_Liste*.csv
 /venv
-labels.pdf
+labels*.pdf
+markdown*.md
