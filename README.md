@@ -3,6 +3,7 @@
 ### The script is written in Python and uses the fpdf library for the PDF generation.**
 
 the parameters for the labels can be adjusted in config.py.
+The settings should be suitable for Herma labels with the number 10916.
 
 
 ![image](https://github.com/user-attachments/assets/acd627b9-557c-4287-b997-8e995289e309)
