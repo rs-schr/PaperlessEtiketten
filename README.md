@@ -1,9 +1,9 @@
 # A very simple script that generates a PDF for Paperless ASN-Codes with QR code from numbers that are loaded from the CSV file.
 
 ### The script is written in Python and uses the fpdf library for the PDF generation.
-### An attempt is always made to automatically create full sheets as required
+### An attempt is always made to automatically create full sheets as required.
 
-the parameters for the labels can be adjusted in config.py.
+The parameters for the labels can be adjusted in config.py.
 The settings should be suitable for Herma labels with the number 10916.
 
 
