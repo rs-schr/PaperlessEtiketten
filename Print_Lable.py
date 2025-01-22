@@ -144,8 +144,7 @@ class LabelGenerator:
             current_pages = items_count // page_capacity + 1
             labels_needed = current_pages * page_capacity
             message = f"Current selection ({items_count} labels) will leave empty spaces on the last page.\nAdjust to {labels_needed} labels for full pages?"
-            if messagebox.askyesno("Adjust Range", message):
-                return True
+            return messagebox.askyesno("Adjust Range", message)
         return False
 
     def create_labels(
@@ -188,7 +187,7 @@ class LabelGenerator:
         # Calculate positions using config values
         mm_to_points = 2.83465
         x_positions = [
-            + i * (LABEL_CONFIG["width"] * mm_to_points)
+            LABEL_CONFIG["margin_left"] * mm_to_points + i * (LABEL_CONFIG["width"] * mm_to_points)
             for i in range(LABEL_CONFIG["per_row"])
         ]
         y_positions = [
