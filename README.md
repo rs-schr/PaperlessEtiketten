@@ -32,8 +32,9 @@ However, a backup file is created.
 source venv/bin/activate
 . ./venv/bin/activate` 
 ```
-5. Install the dependencies `pip install -r requirements.txt`
-6. Clone this repository to the directory
+5. Clone this repository to the directory
+6. Install the dependencies `pip install -r requirements.txt`
+
    
    
 
